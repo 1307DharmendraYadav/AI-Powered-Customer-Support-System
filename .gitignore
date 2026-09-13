@@ -1,0 +1,17 @@
+﻿.vs/
+bin/
+obj/
+*.user
+*.suo
+appsettings.Development.json
+appsettings.Local.json
+*.env
+.env
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.nupkg
+packages/
+.DS_Store
+Thumbs.db
