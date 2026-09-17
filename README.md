@@ -16,14 +16,19 @@
 
 ## 🚧 Current Status
 
-This project is being built in stages, starting with a solid traditional business application before layering in AI capabilities.
+This project is being built chapter-by-chapter as part of the **AI for .NET Developers** training program, with each chapter tracked on its own Git branch so the commit/branch history mirrors the learning progression.
 
-- ✅ **Stage 1 — Core Business Application**: Clean Architecture (Domain, Application, Infrastructure, API), EF Core Code-First, SQL Server, ticketing domain model
-- 🔄 **Stage 2 — Authentication & Authorization**: JWT, Refresh Tokens, Role-Based Access Control *(in progress)*
-- ⏳ **Stage 3 — Generative AI Integration**: Content generation, structured outputs, conversational assistant
-- ⏳ **Stage 4 — RAG Knowledge Assistant**: Semantic search over FAQs & Knowledge Base Articles
-- ⏳ **Stage 5 — Tool Calling & AI Agents**: AI-driven ticket triage, assignment, and automation
-- ⏳ **Stage 6 — Deployment**: Docker, Azure Container Apps, Azure DevOps CI/CD
+| Chapter | Branch | Topic | Status |
+|---|---|---|---|
+| 1.1 | `main` | Project Overview, Users, and Application Architecture | ✅ Done |
+| 1.2 | `chapter-1-2-solution-efcore-sqlserver` | Solution Creation, SQL Server DB Design, EF Core, Entities & Migrations | ✅ Done |
+| 1.3 | `chapter-1-3-dtos-validation-mapping` | DTOs, Data Annotation Validation, Manual Mapping | ✅ Done |
+| 1.4 | — | AI Development Environment & Secure Provider Setup | ⏳ Upcoming |
+| 1.5 | — | Prompt Engineering & Context Engineering | ⏳ Upcoming |
+| 2.x | — | Generative AI, Structured Outputs, Tool Calling, Streaming | ⏳ Upcoming |
+| 4.x | — | Embeddings, Vector Search, RAG | ⏳ Upcoming |
+| 5.x | — | AI Agents, Microsoft Agent Framework, MCP | ⏳ Upcoming |
+| 10.x | — | Docker, Azure Deployment, CI/CD | ⏳ Upcoming |
 
 ---
 
@@ -34,7 +39,7 @@ Built using **Clean Architecture** with clear separation of concerns:
 ```
 CustomerSupportSystem/
 ├── CustomerSupport.Domain/           # Entities, Enums, core business rules
-├── CustomerSupport.Application/      # Use cases, DTOs, interfaces
+├── CustomerSupport.Application/      # DTOs, Mapping Extensions, Use Cases, Interfaces
 ├── CustomerSupport.Infrastructure/    # EF Core, DbContext, Migrations, Repositories
 └── CustomerSupport.API/              # ASP.NET Core Web API, Controllers, Program.cs
 ```
@@ -55,6 +60,17 @@ CustomerSupportSystem/
 | `RefreshToken` | JWT refresh token storage |
 | `Product` | Products linked to support requests |
 
+## 📨 DTOs & Mapping (Chapter 1.3)
+
+To keep a secure boundary between API clients and the Domain model, this project uses dedicated **Request/Response DTOs** with **Data Annotation validation**, and **manual mapping** via extension methods (no AutoMapper) so every property copy is explicit and controlled.
+
+- `Auth`: `RegisterRequestDTO`, `LoginRequestDTO`, `RefreshTokenRequestDTO`, `UserResponseDTO`
+- `Products`: `CreateProductRequestDTO`, `UpdateProductRequestDTO`, `ProductResponseDTO`
+- `Categories`: `CreateTicketCategoryRequestDTO`, `UpdateTicketCategoryRequestDTO`, `TicketCategoryResponseDTO`
+- `Tickets`: `CreateTicketRequestDTO`, `UpdateTicketRequestDTO`, `AssignTicketRequestDTO`, `ChangeTicketStatusRequestDTO`, `AddTicketCommentRequestDTO`, `TicketSummaryResponseDTO`, `TicketDetailsResponseDTO`, `TicketCommentResponseDTO`, `TicketHistoryResponseDTO`
+- `MasterData`: `TicketPriorityResponseDTO`, `TicketStatusResponseDTO`
+- Mapping extensions in `CustomerSupport.Application/Mappings/` for `User`, `Product`, `Ticket`, `TicketCategory`, `TicketPriority`, `TicketStatus`
+
 ---
 
 ## 🛠️ Tech Stack
@@ -65,6 +81,7 @@ CustomerSupportSystem/
 - **Clean Architecture** (Domain-Application-Infrastructure-API)
 - **Swagger / OpenAPI**
 - **JWT Authentication & Refresh Tokens**
+- **DTOs + Data Annotation Validation + Manual Mapping**
 
 **Coming soon:**
 - OpenAI / Azure OpenAI / Microsoft Foundry
@@ -95,6 +112,18 @@ Run the API:
 ```bash
 dotnet run --project CustomerSupport.API
 ```
+
+---
+
+## 🌿 Branching Strategy
+
+Each course chapter is developed on its own branch, following the convention:
+
+```
+chapter-<module>-<chapter>-<short-topic>
+```
+
+Branches are merged into `main` once a chapter is stable and reviewed, keeping `main` as the latest working checkpoint while preserving full chapter-by-chapter history for anyone browsing the repo.
 
 ---
 
