@@ -24,12 +24,8 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.2 | `chapter-1-2-solution-efcore-sqlserver` | Solution Creation, SQL Server DB Design, EF Core, Entities & Migrations | ✅ Done |
 | 1.3 | `chapter-1-3-dtos-validation-mapping` | DTOs, Data Annotation Validation, Manual Mapping | ✅ Done |
 | 1.4 | `chapter-1-4-exceptions-global-handling` | Custom Exceptions and Global Exception Handling | ✅ Done |
-| 1.5 | — | AI Development Environment & Secure Provider Setup | ⏳ Upcoming |
-| 1.6 | — | Prompt Engineering & Context Engineering | ⏳ Upcoming |
-| 2.x | — | Generative AI, Structured Outputs, Tool Calling, Streaming | ⏳ Upcoming |
-| 4.x | — | Embeddings, Vector Search, RAG | ⏳ Upcoming |
-| 5.x | — | AI Agents, Microsoft Agent Framework, MCP | ⏳ Upcoming |
-| 10.x | — | Docker, Azure Deployment, CI/CD | ⏳ Upcoming |
+| 1.5 | `chapter-1-5-repositories` | Repositories, Repository Interfaces, and Application Services | 🔄 In Progress |
+| — | — | More chapters to be added as the course progresses | ⏳ Upcoming |
 
 ---
 
