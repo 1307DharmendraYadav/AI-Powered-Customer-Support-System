@@ -23,8 +23,9 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.1 | `main` | Project Overview, Users, and Application Architecture | ✅ Done |
 | 1.2 | `chapter-1-2-solution-efcore-sqlserver` | Solution Creation, SQL Server DB Design, EF Core, Entities & Migrations | ✅ Done |
 | 1.3 | `chapter-1-3-dtos-validation-mapping` | DTOs, Data Annotation Validation, Manual Mapping | ✅ Done |
-| 1.4 | — | AI Development Environment & Secure Provider Setup | ⏳ Upcoming |
-| 1.5 | — | Prompt Engineering & Context Engineering | ⏳ Upcoming |
+| 1.4 | `chapter-1-4-exceptions-global-handling` | Custom Exceptions and Global Exception Handling | ✅ Done |
+| 1.5 | — | AI Development Environment & Secure Provider Setup | ⏳ Upcoming |
+| 1.6 | — | Prompt Engineering & Context Engineering | ⏳ Upcoming |
 | 2.x | — | Generative AI, Structured Outputs, Tool Calling, Streaming | ⏳ Upcoming |
 | 4.x | — | Embeddings, Vector Search, RAG | ⏳ Upcoming |
 | 5.x | — | AI Agents, Microsoft Agent Framework, MCP | ⏳ Upcoming |
@@ -70,6 +71,21 @@ To keep a secure boundary between API clients and the Domain model, this project
 - `Tickets`: `CreateTicketRequestDTO`, `UpdateTicketRequestDTO`, `AssignTicketRequestDTO`, `ChangeTicketStatusRequestDTO`, `AddTicketCommentRequestDTO`, `TicketSummaryResponseDTO`, `TicketDetailsResponseDTO`, `TicketCommentResponseDTO`, `TicketHistoryResponseDTO`
 - `MasterData`: `TicketPriorityResponseDTO`, `TicketStatusResponseDTO`
 - Mapping extensions in `CustomerSupport.Application/Mappings/` for `User`, `Product`, `Ticket`, `TicketCategory`, `TicketPriority`, `TicketStatus`
+
+## ⚠️ Exception Handling (Chapter 1.4)
+
+Instead of repetitive try-catch blocks scattered across Controllers and Services, this project uses a small set of **custom exception types** in the Application layer, caught centrally by a **Global Exception Handler** in the API layer and converted into a consistent `ApiResponse<T>` response.
+
+- `CustomerSupport.Application/Exceptions/`
+  - `NotFoundException` — requested resource doesn't exist (Product, Ticket, Category, User, KB Article)
+  - `ConflictException` — e.g. duplicate email/registration conflicts
+  - `BusinessRuleException` — violates an application business rule (e.g. invalid ticket status transition)
+  - `ApplicationValidationException` — application-level validation failures
+- `CustomerSupport.API/Models/ApiResponse.cs` — consistent success/error response envelope returned to all clients
+- `CustomerSupport.API/ExceptionHandling/GlobalExceptionHandler.cs` — catches exceptions, logs them, and maps each type to the correct HTTP status code
+- `CustomerSupport.API/Extensions/ExceptionHandlingExtensions.cs` — registers the handler via `AddGlobalExceptionHandling()`
+
+This keeps Controllers and Services clean, centralizes error handling in one place, and guarantees clients always receive a predictable error-response shape.
 
 ---
 
