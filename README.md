@@ -24,7 +24,8 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.2 | `chapter-1-2-solution-efcore-sqlserver` | Solution Creation, SQL Server DB Design, EF Core, Entities & Migrations | ✅ Done |
 | 1.3 | `chapter-1-3-dtos-validation-mapping` | DTOs, Data Annotation Validation, Manual Mapping | ✅ Done |
 | 1.4 | `chapter-1-4-exceptions-global-handling` | Custom Exceptions and Global Exception Handling | ✅ Done |
-| 1.5 | `chapter-1-5-repositories` | Repositories, Repository Interfaces, and Application Services | 🔄 In Progress |
+| 1.5 | `chapter-1-5-repositories` | Creating Repositories (Interfaces + EF Core Implementations) | ✅ Done |
+| 1.6 | `chapter-1-6-services` | Creating Services (Application Service Interfaces + Implementations) | 🔄 In Progress |
 | — | — | More chapters to be added as the course progresses | ⏳ Upcoming |
 
 ---
@@ -83,6 +84,24 @@ Instead of repetitive try-catch blocks scattered across Controllers and Services
 
 This keeps Controllers and Services clean, centralizes error handling in one place, and guarantees clients always receive a predictable error-response shape.
 
+
+## 🗄️ Repositories (Chapter 1.5)
+
+The Application layer is connected to SQL Server through the **Repository pattern**, while remaining fully independent of Entity Framework Core — the Application layer defines *what* data operations are needed; the Infrastructure layer defines *how* they're performed.
+
+- `CustomerSupport.Application/Interfaces/Repositories/`
+  - `IUserRepository`, `IRefreshTokenRepository`, `IProductRepository`,
+    `ITicketCategoryRepository`, `ITicketPriorityRepository`,
+    `ITicketStatusRepository`, `ITicketRepository`
+- `CustomerSupport.Infrastructure/Repositories/`
+  - EF Core implementations of all interfaces above, using `CustomerSupportDbContext`
+  - Read-only queries use `AsNoTracking()`; update-capable reads support
+    optional change tracking via a `trackChanges` parameter
+  - `TicketRepository` eager-loads related Customer, Product, Category,
+    Priority, Status, AssignedToUser, Comments, and History for a complete
+    Ticket representation
+
+Ticket Priority and Ticket Status repositories are **read-only**, since those values are controlled by predefined Enums (`TicketPriorityType`, `TicketStatusType`) rather than free-form admin-managed master data like Ticket Categories.
 ---
 
 ## 🛠️ Tech Stack
