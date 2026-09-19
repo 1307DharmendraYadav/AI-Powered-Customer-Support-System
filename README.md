@@ -25,7 +25,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.3 | `chapter-1-3-dtos-validation-mapping` | DTOs, Data Annotation Validation, Manual Mapping | ✅ Done |
 | 1.4 | `chapter-1-4-exceptions-global-handling` | Custom Exceptions and Global Exception Handling | ✅ Done |
 | 1.5 | `chapter-1-5-repositories` | Creating Repositories (Interfaces + EF Core Implementations) | ✅ Done |
-| 1.6 | `chapter-1-6-services` | Creating Services (Application Service Interfaces + Implementations) | 🔄 In Progress |
+| 1.6 | `chapter-1-6-services` | Creating Services (Application Service Interfaces + Implementations) | ✅ Done |
 | — | — | More chapters to be added as the course progresses | ⏳ Upcoming |
 
 ---
@@ -102,6 +102,24 @@ The Application layer is connected to SQL Server through the **Repository patter
     Ticket representation
 
 Ticket Priority and Ticket Status repositories are **read-only**, since those values are controlled by predefined Enums (`TicketPriorityType`, `TicketStatusType`) rather than free-form admin-managed master data like Ticket Categories.
+
+
+
+## ⚙️ Application Services (Chapter 1.6)
+
+Application Services sit between the (upcoming) Controllers and the Repository layer, coordinating business logic, DTO mapping, and validation before touching the database.
+
+- `CustomerSupport.Application/Interfaces/Services/`
+  - `IMasterDataService` — read-only access to Ticket Priority and Ticket Status master data
+  - `IProductService` — Product retrieval and creation, coordinating `IProductRepository`, DTO mapping, and uniqueness validation
+  - `ITicketCategoryService` — Ticket Category retrieval and creation, coordinating `ITicketCategoryRepository`, DTO mapping, and uniqueness validation
+- `CustomerSupport.Application/Services/`
+  - `MasterDataService`, `ProductService`, `TicketCategoryService` — implementations using the DTOs (Ch. 1.3), custom exceptions (Ch. 1.4), and repositories (Ch. 1.5) built in earlier chapters
+- `CustomerSupport.Application/Extensions/ApplicationServiceExtensions.cs`
+  - `AddApplicationServices()` — registers all Application Services with the DI container, wired up in `Program.cs`
+
+Also completed in this chapter: full DI registration of all 7 repository interfaces (`IUserRepository`, `IRefreshTokenRepository`, `IProductRepository`, `ITicketCategoryRepository`, `ITicketPriorityRepository`, `ITicketStatusRepository`, `ITicketRepository`) in `InfrastructureServiceExtensions.cs`, completing the wiring that Chapter 1.5 introduced.
+
 ---
 
 ## 🛠️ Tech Stack
