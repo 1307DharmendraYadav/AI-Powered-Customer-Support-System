@@ -184,4 +184,4 @@ This project is licensed under the MIT License.
 
 ## 🙋 About
 
-This project is being developed as part of the **AI for .NET Developers** training program by [DotNetTutorials](https://dotnettutorials.net), demonstrating the journey from a traditional enterprise application to a fully AI-powered production system.
+This project is being developed as part of the **AI for .NET Developers** demonstrating the journey from a traditional enterprise application to a fully AI-powered production system.
