@@ -1,4 +1,6 @@
-﻿using CustomerSupport.Application.Interfaces.Repositories;
+﻿using CustomerSupport.Application.Interfaces.Authentication;
+using CustomerSupport.Application.Interfaces.Repositories;
+using CustomerSupport.Infrastructure.Authentication;
 using CustomerSupport.Infrastructure.Data;
 using CustomerSupport.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,9 @@ namespace CustomerSupport.Infrastructure.Extensions
             services.AddScoped<ITicketPriorityRepository, TicketPriorityRepository>();
             services.AddScoped<ITicketStatusRepository, TicketStatusRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
+
+            services.AddScoped<IPasswordService, PasswordService>();
+            services.AddScoped<ITokenService, JwtTokenService>();
 
             return services;
         }
