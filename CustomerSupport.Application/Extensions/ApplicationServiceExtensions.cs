@@ -11,8 +11,10 @@ namespace CustomerSupport.Application.Extensions
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ITicketCategoryService, TicketCategoryService>();
             services.AddScoped<IMasterDataService, MasterDataService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }
     }
 }
+

@@ -26,7 +26,10 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.4 | `chapter-1-4-exceptions-global-handling` | Custom Exceptions and Global Exception Handling | ✅ Done |
 | 1.5 | `chapter-1-5-repositories` | Creating Repositories (Interfaces + EF Core Implementations) | ✅ Done |
 | 1.6 | `chapter-1-6-services` | Creating Services (Application Service Interfaces + Implementations) | ✅ Done |
-| — | — | More chapters to be added as the course progresses | ⏳ Upcoming |
+| 1.7 | `chapter-1-7-jwt-authentication` | JWT Authentication with Access Token and Refresh Token | ✅ Done |
+| 1.8 | — | Authorization and Current User Context | ⏳ Upcoming |
+| 1.9 | — | Product, Ticket Category, and Master Data APIs | ⏳ Upcoming |
+| 1.10 | — | Support Ticket Creation and Retrieval | ⏳ Upcoming |
 
 ---
 
@@ -120,6 +123,24 @@ Application Services sit between the (upcoming) Controllers and the Repository l
 
 Also completed in this chapter: full DI registration of all 7 repository interfaces (`IUserRepository`, `IRefreshTokenRepository`, `IProductRepository`, `ITicketCategoryRepository`, `ITicketPriorityRepository`, `ITicketStatusRepository`, `ITicketRepository`) in `InfrastructureServiceExtensions.cs`, completing the wiring that Chapter 1.5 introduced.
 
+
+## 🔐 JWT Authentication (Chapter 1.7)
+
+Implements stateless authentication using signed JWTs, with password hashing and refresh token support.
+
+- `CustomerSupport.Application/Interfaces/Authentication/`
+  - `IPasswordService` — password hashing and verification abstraction
+  - `ITokenService` — access/refresh token generation abstraction
+- `CustomerSupport.Application/Services/AuthService.cs` — orchestrates the full authentication workflow (registration, login, token generation, refresh token rotation, revocation) using only abstractions, independent of any specific hashing or JWT library
+- `CustomerSupport.Infrastructure/Authentication/`
+  - `PasswordService` — implements `IPasswordService` using ASP.NET Core Identity's `PasswordHasher<User>`
+  - `JwtSettings` / `JwtTokenService` — signed JWT generation and validation configuration
+- `CustomerSupport.API/Extensions/AuthenticationExtensions.cs` — `AddJwtAuthentication()`, wiring JWT Bearer authentication into the pipeline
+- `CustomerSupport.API/Controllers/AuthController.cs` — the API's first public endpoints (Register, Login, Refresh Token, Logout)
+- `UnauthorizedException` — new exception type handled by the existing Global Exception Handler (Ch. 1.4)
+
+**Security note:** The SQL Server connection string and JWT signing key have been moved out of `appsettings.json` into the gitignored `appsettings.Development.json`, so no secrets are committed to source control going forward.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -129,7 +150,7 @@ Also completed in this chapter: full DI registration of all 7 repository interfa
 - **SQL Server**
 - **Clean Architecture** (Domain-Application-Infrastructure-API)
 - **Swagger / OpenAPI**
-- **JWT Authentication & Refresh Tokens**
+- - **JWT Authentication & Refresh Tokens** (implemented — see Chapter 1.7 above)
 - **DTOs + Data Annotation Validation + Manual Mapping**
 
 **Coming soon:**
