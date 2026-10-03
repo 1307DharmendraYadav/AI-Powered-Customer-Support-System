@@ -27,7 +27,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.5 | `chapter-1-5-repositories` | Creating Repositories (Interfaces + EF Core Implementations) | ✅ Done |
 | 1.6 | `chapter-1-6-services` | Creating Services (Application Service Interfaces + Implementations) | ✅ Done |
 | 1.7 | `chapter-1-7-jwt-authentication` | JWT Authentication with Access Token and Refresh Token | ✅ Done |
-| 1.8 | — | Authorization and Current User Context | ⏳ Upcoming |
+| 1.8 | `chapter-1-8-authorization-current-user` | Authorization and Current User Context | ✅ Done |
 | 1.9 | — | Product, Ticket Category, and Master Data APIs | ⏳ Upcoming |
 | 1.10 | — | Support Ticket Creation and Retrieval | ⏳ Upcoming |
 
@@ -140,6 +140,19 @@ Implements stateless authentication using signed JWTs, with password hashing and
 - `UnauthorizedException` — new exception type handled by the existing Global Exception Handler (Ch. 1.4)
 
 **Security note:** The SQL Server connection string and JWT signing key have been moved out of `appsettings.json` into the gitignored `appsettings.Development.json`, so no secrets are committed to source control going forward.
+
+
+## 👤 Authorization & Current User Context (Chapter 1.8)
+
+Exposes the authenticated user's identity to the Application layer through a clean abstraction, and wires up ASP.NET Core Authorization on top of the JWT authentication built in Chapter 1.7.
+
+- `CustomerSupport.Application/Interfaces/CurrentUser/ICurrentUserService.cs` — abstraction exposing the authenticated user's `UserId`, `FullName`, `Email`, and `Role` to the Application layer, without it depending directly on `HttpContext`
+- `CustomerSupport.API/Services/CurrentUserService.cs` — implementation reading claims from `HttpContext.User` via `IHttpContextAccessor`
+- `CustomerSupport.API/Extensions/AuthorizationExtensions.cs` — `AddApiAuthorization()`, registering ASP.NET Core Authorization, `IHttpContextAccessor`, and `ICurrentUserService`
+- `CustomerSupport.Application/DTOs/Auth/CurrentUserResponseDTO.cs` — response shape for the current-user endpoint
+- `CustomerSupport.API/Controllers/AccountController.cs` — `GET /api/account/me`, an `[Authorize]`-protected endpoint returning the authenticated user's profile
+
+**Also fixed in this chapter:** the Global Exception Handler (Ch. 1.4) had been accidentally dropped from `Program.cs` during an earlier merge — restored, so authentication/authorization failures now return clean `ApiResponse<T>` errors instead of raw stack traces. The app's root URL (`/`) now redirects to Swagger UI in Development instead of returning a 404.
 
 ---
 

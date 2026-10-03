@@ -13,8 +13,8 @@ namespace CustomerSupport.API
             // Add services to the container.
             builder.Services.AddControllers();
 
-            // Register ASP.NET Core's built-in OpenAPI document generation. 
-            // This generates the OpenAPI specification that describes 
+            // Register ASP.NET Core's built-in OpenAPI document generation.
+            // This generates the OpenAPI specification that describes
             // our API endpoints, request DTOs, response DTOs, and schemas.
             builder.Services.AddOpenApi();
 
@@ -43,6 +43,21 @@ namespace CustomerSupport.API
             // Authorization: Bearer <access-token>
             builder.Services.AddJwtAuthentication(builder.Configuration);
 
+            // Register Authorization and Current User services.
+            // This extension method registers:
+            // - ASP.NET Core Authorization
+            // - IHttpContextAccessor
+            // - ICurrentUserService -> CurrentUserService
+
+            // CurrentUserService allows the Application layer
+            // to access the authenticated User's:
+            // - UserId
+            // - FullName
+            // - Email
+            // - Role
+            // without directly depending on HttpContext.
+            builder.Services.AddApiAuthorization();
+
             var app = builder.Build();
 
             // Expose OpenAPI and Swagger UI only in Development.
@@ -69,13 +84,19 @@ namespace CustomerSupport.API
                     // Swagger UI will be available at: /swagger
                     options.RoutePrefix = "swagger";
                 });
+
+                // Redirect the root URL ("/") to Swagger UI.
+                // This way, hitting https://localhost:7119/ directly
+                // (e.g. when the browser auto-launches on dotnet run)
+                // lands on the Swagger UI instead of returning a 404.
+                app.MapGet("/", () => Results.Redirect("/swagger"))
+                   .ExcludeFromDescription();
             }
 
             // Add the global exception handling middleware to the HTTP request pipeline.
             // When an unhandled exception occurs,
             // ASP.NET Core forwards it to the registered exception handler.
             app.UseExceptionHandler();
-
 
             app.UseHttpsRedirection();
 
