@@ -28,8 +28,10 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.6 | `chapter-1-6-services` | Creating Services (Application Service Interfaces + Implementations) | ✅ Done |
 | 1.7 | `chapter-1-7-jwt-authentication` | JWT Authentication with Access Token and Refresh Token | ✅ Done |
 | 1.8 | `chapter-1-8-authorization-current-user` | Authorization and Current User Context | ✅ Done |
-| 1.9 | — | Product, Ticket Category, and Master Data APIs | ⏳ Upcoming |
+| 1.9 | `chapter-1-9-product-category-masterdata-apis` | Product, Ticket Category, and Master Data APIs | ✅ Done |
 | 1.10 | — | Support Ticket Creation and Retrieval | ⏳ Upcoming |
+| 1.11 | — | Ticket Assignment, Status Workflow, Comments, and History | ⏳ Upcoming |
+| 1.12 | — | File Attachments | ⏳ Upcoming |
 
 ---
 
@@ -153,6 +155,17 @@ Exposes the authenticated user's identity to the Application layer through a cle
 - `CustomerSupport.API/Controllers/AccountController.cs` — `GET /api/account/me`, an `[Authorize]`-protected endpoint returning the authenticated user's profile
 
 **Also fixed in this chapter:** the Global Exception Handler (Ch. 1.4) had been accidentally dropped from `Program.cs` during an earlier merge — restored, so authentication/authorization failures now return clean `ApiResponse<T>` errors instead of raw stack traces. The app's root URL (`/`) now redirects to Swagger UI in Development instead of returning a 404.
+
+
+## 🌐 Product, Ticket Category & Master Data APIs (Chapter 1.9)
+
+The first business Controllers, exposing the Application Services built in Chapter 1.6 as authenticated REST endpoints.
+
+- `CustomerSupport.API/Controllers/ProductsController.cs` — list and create Products
+- `CustomerSupport.API/Controllers/TicketCategoriesController.cs` — list and create Ticket Categories
+- `CustomerSupport.API/Controllers/MasterDataController.cs` — read-only Ticket Priority and Ticket Status lookups
+
+This completes the first full vertical slice of the application — from SQL Server, through Repositories and Services, to a working authenticated API endpoint.
 
 ---
 
