@@ -30,8 +30,8 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.8 | `chapter-1-8-authorization-current-user` | Authorization and Current User Context | ✅ Done |
 | 1.9 | `chapter-1-9-product-category-masterdata-apis` | Product, Ticket Category, and Master Data APIs | ✅ Done |
 | 1.10 | `chapter-1-10-ticket-creation-retrieval` | Support Ticket Creation and Retrieval | ✅ Done |
-| 1.11 | — | Ticket Assignment, Status Workflow, Comments, and History | ⏳ Upcoming |
-| 1.12 | — | File Attachments | ⏳ Upcoming |
+| 1.11 | `chapter-1-11-ticket-assignment-status-comments-history` | Ticket Assignment, Status Workflow, Comments, and History | ✅ Done |
+| 1.12 | `chapter-1-12-file-attachments` | File Attachments | 🔄 In Progress |
 
 ---
 
