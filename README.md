@@ -30,7 +30,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.8 | `chapter-1-8-authorization-current-user` | Authorization and Current User Context | ✅ Done |
 | 1.9 | `chapter-1-9-product-category-masterdata-apis` | Product, Ticket Category, and Master Data APIs | ✅ Done |
 | 1.10 | `chapter-1-10-ticket-creation-retrieval` | Support Ticket Creation and Retrieval | ✅ Done |
-| 1.11 | — | Ticket Assignment, Status Workflow, Comments, and History | ⏳ Upcoming |
+| 1.11 | `chapter-1-11-ticket-assignment-status-comments-history` | Ticket Assignment, Status Workflow, Comments, and History | ✅ Done |
 | 1.12 | — | File Attachments | ⏳ Upcoming |
 
 ---
@@ -178,6 +178,21 @@ Exposes the core domain entity — Support Tickets — with creation and paged/f
 - `CustomerSupport.API/Controllers/TicketsController.cs` — create and retrieve Support Tickets (single + paged/filtered list)
 
 `ITicketRepository` and `TicketRepository` were extended with paged/filtered query support to back this.
+
+
+## 🔄 Ticket Assignment, Status Workflow, Comments & History (Chapter 1.11)
+
+Extends the Ticket vertical slice from Chapter 1.10 with the full operational lifecycle of a Support Ticket.
+
+- `ITicketService` / `TicketService` extended with:
+  - Assigning a ticket to a support user (`TicketAssignment`)
+  - Transitioning a ticket through its status workflow (`TicketStatus`)
+  - Adding comments to a ticket (`TicketComment`)
+  - Retrieving a ticket's full change history (`TicketHistory`)
+- `TicketsController` extended with matching endpoints for each of the above, following the same `ApiResponse<T>` and role-based authorization pattern established in earlier chapters
+
+No new files were introduced in this chapter — all changes build on the existing Ticket Service and Controller from Chapter 1.10, completing the core ticketing feature set.
+
 ---
 
 ## 🛠️ Tech Stack
