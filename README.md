@@ -29,7 +29,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.7 | `chapter-1-7-jwt-authentication` | JWT Authentication with Access Token and Refresh Token | ✅ Done |
 | 1.8 | `chapter-1-8-authorization-current-user` | Authorization and Current User Context | ✅ Done |
 | 1.9 | `chapter-1-9-product-category-masterdata-apis` | Product, Ticket Category, and Master Data APIs | ✅ Done |
-| 1.10 | — | Support Ticket Creation and Retrieval | ⏳ Upcoming |
+| 1.10 | `chapter-1-10-ticket-creation-retrieval` | Support Ticket Creation and Retrieval | ✅ Done |
 | 1.11 | — | Ticket Assignment, Status Workflow, Comments, and History | ⏳ Upcoming |
 | 1.12 | — | File Attachments | ⏳ Upcoming |
 
@@ -167,6 +167,17 @@ The first business Controllers, exposing the Application Services built in Chapt
 
 This completes the first full vertical slice of the application — from SQL Server, through Repositories and Services, to a working authenticated API endpoint.
 
+## 🎫 Support Ticket Creation & Retrieval (Chapter 1.10)
+
+Exposes the core domain entity — Support Tickets — with creation and paged/filtered retrieval, introducing pagination to the API for the first time.
+
+- `CustomerSupport.Application/DTOs/Tickets/TicketQueryParameters.cs` — filtering and paging parameters (status, category, priority, page number/size) for listing tickets
+- `CustomerSupport.Application/DTOs/Tickets/TicketAssignmentResponseDTO.cs` — a ticket's assignment information
+- `CustomerSupport.Application/Models/PagedResult.cs` — generic `PagedResult<T>` wrapper used for all paginated API responses going forward
+- `CustomerSupport.Application/Interfaces/Services/ITicketService.cs` / `CustomerSupport.Application/Services/TicketService.cs` — coordinates ticket creation and paged/filtered retrieval
+- `CustomerSupport.API/Controllers/TicketsController.cs` — create and retrieve Support Tickets (single + paged/filtered list)
+
+`ITicketRepository` and `TicketRepository` were extended with paged/filtered query support to back this.
 ---
 
 ## 🛠️ Tech Stack
