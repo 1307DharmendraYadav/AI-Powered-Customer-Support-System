@@ -27,5 +27,6 @@ namespace CustomerSupport.Application.DTOs.Tickets
 
         public List<TicketCommentResponseDTO> Comments { get; set; } = [];
         public List<TicketHistoryResponseDTO> History { get; set; } = [];
+        public IReadOnlyCollection<TicketAttachmentResponseDTO> Attachments { get; set; } = [];
     }
 }

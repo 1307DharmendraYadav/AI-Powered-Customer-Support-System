@@ -83,6 +83,12 @@ namespace CustomerSupport.Infrastructure.Repositories
                     // Load the User who performed the assignment.
                     .ThenInclude(assignment => assignment.AssignedByUser)
 
+                // Load Attachment metadata belonging to the Ticket.
+                .Include(ticket => ticket.Attachments)
+                    // Load the User who uploaded each Attachment so response DTOs
+                    // can show a friendly uploader name.
+                    .ThenInclude(attachment => attachment.UploadedByUser)
+
                 // Load Ticket history records such as:
                 // - Ticket Created
                 // - Assigned/Reassigned
@@ -95,6 +101,8 @@ namespace CustomerSupport.Infrastructure.Repositories
                 // Execute the SQL query and return the matching Ticket.
                 .FirstOrDefaultAsync(ticket => ticket.Id == id);
         }
+
+
 
         public async Task AddAsync(SupportTicket ticket)
         {

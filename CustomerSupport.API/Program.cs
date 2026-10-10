@@ -13,8 +13,8 @@ namespace CustomerSupport.API
             // Add services to the container.
             builder.Services.AddControllers();
 
-            // Register ASP.NET Core's built-in OpenAPI document generation.
-            // This generates the OpenAPI specification that describes
+            // Register ASP.NET Core's built-in OpenAPI document generation. 
+            // This generates the OpenAPI specification that describes 
             // our API endpoints, request DTOs, response DTOs, and schemas.
             builder.Services.AddOpenApi();
 
@@ -22,7 +22,18 @@ namespace CustomerSupport.API
                 builder.Configuration.GetConnectionString("CustomerSupportDBConnection")
                 ?? throw new InvalidOperationException("CustomerSupportDBConnection is not configured.");
 
-            builder.Services.AddInfrastructureServices(connectionString);
+            // Read the relative Attachment-storage folder from configuration.
+            var relativeAttachmentPath =
+                builder.Configuration["LocalFileStorage:TicketAttachmentsPath"]
+                ?? "Storage/TicketAttachments";
+
+            // Convert the relative folder into an absolute path under the API project.
+            // The database will still store only relative Attachment paths.
+            var localAttachmentRootPath = Path.GetFullPath(
+                Path.Combine(builder.Environment.ContentRootPath, relativeAttachmentPath));
+
+            // Pass the Local storage root to Infrastructure.
+            builder.Services.AddInfrastructureServices(connectionString, localAttachmentRootPath);
 
             // Register the application's global exception handler.
             // This allows unhandled exceptions from the application
@@ -84,13 +95,6 @@ namespace CustomerSupport.API
                     // Swagger UI will be available at: /swagger
                     options.RoutePrefix = "swagger";
                 });
-
-                // Redirect the root URL ("/") to Swagger UI.
-                // This way, hitting https://localhost:7119/ directly
-                // (e.g. when the browser auto-launches on dotnet run)
-                // lands on the Swagger UI instead of returning a 404.
-                app.MapGet("/", () => Results.Redirect("/swagger"))
-                   .ExcludeFromDescription();
             }
 
             // Add the global exception handling middleware to the HTTP request pipeline.
