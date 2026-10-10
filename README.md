@@ -181,6 +181,18 @@ Exposes the core domain entity — Support Tickets — with creation and paged/f
 
 `ITicketRepository` and `TicketRepository` were extended with paged/filtered query support to back this.
 
+## 🔄 Ticket Assignment, Status Workflow, Comments & History (Chapter 1.11)
+
+Extends the Ticket vertical slice from Chapter 1.10 with the full operational lifecycle of a Support Ticket.
+
+- `ITicketService` / `TicketService` extended with:
+  - Assigning a ticket to a support user (`TicketAssignment`)
+  - Transitioning a ticket through its status workflow (`TicketStatus`)
+  - Adding comments to a ticket (`TicketComment`)
+  - Retrieving a ticket's full change history (`TicketHistory`)
+- `TicketsController` extended with matching endpoints for each of the above, following the same `ApiResponse<T>` and role-based authorization pattern established in earlier chapters
+
+No new files were introduced in this chapter. All changes build on the existing Ticket Service and Controller from Chapter 1.10, completing the core ticketing feature set.
 
 ## 📎 File Attachments (Chapter 1.12)
 
@@ -194,6 +206,7 @@ Adds file attachment support to Support Tickets (upload, list, and download), wi
 - Ticket details now include attachments via `TicketAttachmentResponseDTO`
 
 Because storage sits behind `IFileStorageService`, local disk can be replaced with cloud blob storage later without touching business logic. Uploaded files are written to the `Storage/` folder, which is excluded from source control via `.gitignore`.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -203,7 +216,7 @@ Because storage sits behind `IFileStorageService`, local disk can be replaced wi
 - **SQL Server**
 - **Clean Architecture** (Domain-Application-Infrastructure-API)
 - **Swagger / OpenAPI**
-- - **JWT Authentication & Refresh Tokens** (implemented — see Chapter 1.7 above)
+- **JWT Authentication & Refresh Tokens** (implemented — see Chapter 1.7 above)
 - **DTOs + Data Annotation Validation + Manual Mapping**
 
 **Coming soon:**
@@ -258,4 +271,4 @@ This project is licensed under the MIT License.
 
 ## 🙋 About
 
-This project is being developed as part of the **AI for .NET Developers** demonstrating the journey from a traditional enterprise application to a fully AI-powered production system.
+   This project is being developed as part of the **AI for .NET Developers** training program to demonstrating the journey from a traditional enterprise application to a fully AI-powered production system.
