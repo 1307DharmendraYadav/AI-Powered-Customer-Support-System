@@ -180,6 +180,20 @@ Exposes the core domain entity — Support Tickets — with creation and paged/f
 - `CustomerSupport.API/Controllers/TicketsController.cs` — create and retrieve Support Tickets (single + paged/filtered list)
 
 `ITicketRepository` and `TicketRepository` were extended with paged/filtered query support to back this.
+
+
+## 📎 File Attachments (Chapter 1.12)
+
+Adds file attachment support to Support Tickets (upload, list, and download), with file storage hidden behind an abstraction.
+
+- `CustomerSupport.Application/Interfaces/Files/IFileStorageService.cs` - storage abstraction used by the Application layer
+- `CustomerSupport.Infrastructure/Files/LocalFileStorageService.cs` and `LocalFileStorageOptions.cs` - local-disk implementation with strongly typed configuration (`LocalFileStorage:TicketAttachmentsPath` in `appsettings.json`)
+- `ITicketAttachmentService` / `TicketAttachmentService` - validates the ticket, stores the file, and saves `TicketAttachment` metadata
+- `FileUploadModel`, `StoredFileResult`, `FileDownloadResult` - framework-independent file models
+- `TicketAttachmentsController` - endpoints to upload, list, and download attachments
+- Ticket details now include attachments via `TicketAttachmentResponseDTO`
+
+Because storage sits behind `IFileStorageService`, local disk can be replaced with cloud blob storage later without touching business logic. Uploaded files are written to the `Storage/` folder, which is excluded from source control via `.gitignore`.
 ---
 
 ## 🛠️ Tech Stack
