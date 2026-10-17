@@ -32,7 +32,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.10 | `chapter-1-10-ticket-creation-retrieval` | Support Ticket Creation and Retrieval | ✅ Done |
 | 1.11 | `chapter-1-11-ticket-assignment-status-comments-history` | Ticket Assignment, Status Workflow, Comments, and History | ✅ Done |
 | 1.12 | `chapter-1-12-file-attachments` | File Attachments | ✅ Done |
-| 1.13 | — | Knowledge Base and FAQ | ⏳ Upcoming |
+| 1.13 | `chapter-1-13-knowledge-base-faq` | Knowledge Base and FAQ | ✅ Done |
 | 1.14 | — | Serilog Logging, Health Checks and CORS | ⏳ Upcoming |
 
 ---
@@ -206,6 +206,20 @@ Adds file attachment support to Support Tickets (upload, list, and download), wi
 - Ticket details now include attachments via `TicketAttachmentResponseDTO`
 
 Because storage sits behind `IFileStorageService`, local disk can be replaced with cloud blob storage later without touching business logic. Uploaded files are written to the `Storage/` folder, which is excluded from source control via `.gitignore`.
+
+
+## 📚 Knowledge Base & FAQ (Chapter 1.13)
+
+Adds reusable support content that customers and staff can search, and that administrators maintain. This content is also the intended knowledge source for the RAG assistant in the later AI chapters.
+
+- `KnowledgeBaseController` and `FAQsController` - endpoints to search, read, and (for Administrators) manage articles and FAQs
+- `IKnowledgeBaseService` / `KnowledgeBaseService` and `IFAQService` / `FAQService` - business rules for visibility, publishing, and activation
+- `IKnowledgeBaseRepository` / `IFAQRepository` with EF Core implementations - searching, filtering, and paging
+- `KnowledgeBaseQueryParameters` and `FAQQueryParameters` - text search, Product filter, page number and size
+- Request/response DTOs and mapping extensions for both modules
+- `FAQs` DbSet enabled in `CustomerSupportDbContext` (the table already existed from Chapter 1.2, so no migration was needed)
+
+**Access rules:** Customers and Support Executives can read only active, published Knowledge Base articles and active FAQs. Administrators can read everything, create and update both, publish or unpublish and activate or deactivate articles, and deactivate FAQs.
 
 ---
 

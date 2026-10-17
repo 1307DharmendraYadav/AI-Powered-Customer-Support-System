@@ -43,6 +43,11 @@ namespace CustomerSupport.Infrastructure.Extensions
             // Later, this single registration can point to AzureBlobFileStorageService.
             services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
+            // Knowledge Base and FAQ EF Core repositories.
+            services.AddScoped<IKnowledgeBaseRepository, KnowledgeBaseRepository>();
+            services.AddScoped<IFAQRepository, FAQRepository>();
+
+
             return services;
         }
     }

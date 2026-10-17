@@ -16,6 +16,11 @@ namespace CustomerSupport.Application.Extensions
             // Register the Ticket Attachment Application Service.
             services.AddScoped<ITicketAttachmentService, TicketAttachmentService>();
 
+            // Knowledge Base and FAQ Application Services.
+            services.AddScoped<IKnowledgeBaseService, KnowledgeBaseService>();
+            services.AddScoped<IFAQService, FAQService>();
+
+
             return services;
         }
     }
