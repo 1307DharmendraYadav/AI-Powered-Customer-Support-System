@@ -1,6 +1,7 @@
 using CustomerSupport.API.Extensions;
 using CustomerSupport.Application.Extensions;
 using CustomerSupport.Infrastructure.Extensions;
+using Serilog;
 
 namespace CustomerSupport.API
 {
@@ -12,6 +13,9 @@ namespace CustomerSupport.API
 
             // Add services to the container.
             builder.Services.AddControllers();
+
+            // Configure Serilog as the application's logging provider.
+            builder.AddSerilogLogging();
 
             // Register ASP.NET Core's built-in OpenAPI document generation. 
             // This generates the OpenAPI specification that describes 
@@ -69,6 +73,26 @@ namespace CustomerSupport.API
             // without directly depending on HttpContext.
             builder.Services.AddApiAuthorization();
 
+            // Register CORS services.
+            builder.Services.AddCors(options =>
+            {
+                // Create a named CORS policy for our Angular application.
+                options.AddPolicy("AngularPolicy", policy =>
+                {
+                    policy
+                        // Allow requests from the Angular application.
+                        .WithOrigins("http://localhost:4200")
+
+                        // Allow HTTP methods such as
+                        // GET, POST, PUT, PATCH, and DELETE.
+                        .AllowAnyMethod()
+
+                        // Allow request headers such as
+                        // Content-Type and Authorization.
+                        .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Expose OpenAPI and Swagger UI only in Development.
@@ -97,12 +121,25 @@ namespace CustomerSupport.API
                 });
             }
 
+            // Adds ASP.NET Core's TraceIdentifier to Serilog LogContext.
+            // All log statements generated while processing the same HTTP
+            // request can therefore contain the same TraceIdentifier.
+            app.UseTraceIdentifierLogging();
+
+            // Logs one structured summary entry for every HTTP request.
+            // Typical information includes request path, status code, and execution time.
+            app.UseSerilogRequestLogging();
+
             // Add the global exception handling middleware to the HTTP request pipeline.
             // When an unhandled exception occurs,
             // ASP.NET Core forwards it to the registered exception handler.
             app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
+
+            // Enable CORS using the AngularPolicy.
+            // This must run before Authentication and Authorization.
+            app.UseCors("AngularPolicy");
 
             // Authenticate the current request.
             // The JWT Bearer middleware looks for:
@@ -132,3 +169,4 @@ namespace CustomerSupport.API
         }
     }
 }
+

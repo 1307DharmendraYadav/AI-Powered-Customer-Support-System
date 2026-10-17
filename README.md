@@ -33,7 +33,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.11 | `chapter-1-11-ticket-assignment-status-comments-history` | Ticket Assignment, Status Workflow, Comments, and History | ✅ Done |
 | 1.12 | `chapter-1-12-file-attachments` | File Attachments | ✅ Done |
 | 1.13 | `chapter-1-13-knowledge-base-faq` | Knowledge Base and FAQ | ✅ Done |
-| 1.14 | — | Serilog Logging, Health Checks and CORS | ⏳ Upcoming |
+| 1.14 | `chapter-1-14-serilog-health-checks-cors` | Serilog Logging, Health Checks and CORS | ✅ Done |
 
 ---
 
@@ -220,6 +220,19 @@ Adds reusable support content that customers and staff can search, and that admi
 - `FAQs` DbSet enabled in `CustomerSupportDbContext` (the table already existed from Chapter 1.2, so no migration was needed)
 
 **Access rules:** Customers and Support Executives can read only active, published Knowledge Base articles and active FAQs. Administrators can read everything, create and update both, publish or unpublish and activate or deactivate articles, and deactivate FAQs.
+
+
+## 🪵 Serilog Logging, Health Checks & CORS (Chapter 1.14)
+
+Makes the application observable and ready for a browser front end.
+
+- **Serilog:** the existing `ILogger<T>` calls in Services, Controllers, and the Global Exception Handler now write to daily rolling files in `Logs/` (the 30 most recent files are kept). Configuration lives in the `Serilog` section of `appsettings.json`.
+- `SerilogExtensions` and `TraceLoggingExtensions` - configure Serilog and add ASP.NET Core's `TraceIdentifier` to every log entry, so all entries from one request can be correlated
+- `UseSerilogRequestLogging()` - one structured summary line per HTTP request (path, status code, duration)
+- `HealthController` - anonymous `GET /health`, returns 200 when SQL Server is reachable and 503 when it isn't
+- **CORS:** an `AngularPolicy` that allows the Angular dev origin (`http://localhost:4200`) with any method and header, enabled before authentication and authorization
+
+The `Logs/` folder is excluded from source control via `.gitignore`.
 
 ---
 
