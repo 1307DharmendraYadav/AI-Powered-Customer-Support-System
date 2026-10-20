@@ -93,6 +93,9 @@ namespace CustomerSupport.API
                 });
             });
 
+            //OpenAI Registration
+            builder.Services.AddOpenAISetup(builder.Configuration);
+
             var app = builder.Build();
 
             // Expose OpenAPI and Swagger UI only in Development.
