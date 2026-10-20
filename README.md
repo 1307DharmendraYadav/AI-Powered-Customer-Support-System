@@ -35,6 +35,10 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.13 | `chapter-1-13-knowledge-base-faq` | Knowledge Base and FAQ | ✅ Done |
 | 1.14 | `chapter-1-14-serilog-health-checks-cors` | Serilog Logging, Health Checks and CORS | ✅ Done |
 
+| 2.1 | — | AI, ML, Deep Learning, Predictive, Generative and Agentic AI (concepts, no code) | ✅ Done |
+| 2.2 | `chapter-2-2-ai-environment-openai-setup` | AI Development Environment and Basic OpenAI Setup | ✅ Done |
+| 2.3 | — | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ⏳ Upcoming |
+
 ---
 
 ## 🏗️ Architecture
@@ -233,6 +237,16 @@ Makes the application observable and ready for a browser front end.
 - **CORS:** an `AngularPolicy` that allows the Angular dev origin (`http://localhost:4200`) with any method and header, enabled before authentication and authorization
 
 The `Logs/` folder is excluded from source control via `.gitignore`.
+
+## 🤖 OpenAI Setup (Chapter 2.2)
+
+Prepares the application for AI features without changing any Module 1 behaviour.
+
+- Official **OpenAI .NET SDK** added to `CustomerSupport.Infrastructure`
+- `OpenAISettings` - strongly typed settings (`Model`, `MaxOutputTokens`, `TimeoutSeconds`, `ApiKey`)
+- `OpenAISetupExtensions.AddOpenAISetup()` - binds the `OpenAI` configuration section, validates it, and registers the OpenAI client in Dependency Injection
+- `ValidateOnStart()` - the API refuses to start if the key or model settings are missing or out of range
+- The **API key is stored in User Secrets**, never in source control. Non-secret settings live in `appsettings.json`.
 
 ---
 
