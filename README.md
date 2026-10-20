@@ -36,7 +36,8 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.14 | `chapter-1-14-serilog-health-checks-cors` | Serilog Logging, Health Checks and CORS | ✅ Done |
 | 2.1 | — | AI, ML, Deep Learning, Predictive, Generative and Agentic AI (concepts, no code) | ✅ Done |
 | 2.2 | `chapter-2-2-ai-environment-openai-setup` | AI Development Environment and Basic OpenAI Setup | ✅ Done |
-| 2.3 | — | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ⏳ Upcoming |
+| 2.3 | `chapter-2-3-openai-first-api-call` | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ⏳ Upcoming |
+
 
 ---
 
