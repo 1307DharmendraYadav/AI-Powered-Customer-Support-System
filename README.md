@@ -36,8 +36,14 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 1.14 | `chapter-1-14-serilog-health-checks-cors` | Serilog Logging, Health Checks and CORS | ✅ Done |
 | 2.1 | — | AI, ML, Deep Learning, Predictive, Generative and Agentic AI (concepts, no code) | ✅ Done |
 | 2.2 | `chapter-2-2-ai-environment-openai-setup` | AI Development Environment and Basic OpenAI Setup | ✅ Done |
-| 2.3 | `chapter-2-3-openai-first-api-call` | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ⏳ Upcoming |
+| 2.3 | `chapter-2-3-openai-first-api-call` | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ✅ Done |
+| 3.2 | — | Prompt Engineering and Context Engineering for Reliable AI Responses | ⏳ Upcoming |
+| 3.3 | — | Build the First AI Features in the Customer Support Application | ⏳ Upcoming |
+| 3.4 | — | Structured Outputs and Strongly Typed AI Contracts | ⏳ Upcoming |
+| 3.5 | — | Microsoft.Extensions.AI with Structured Outputs | ⏳ Upcoming |
+| 3.5.1 | — | Introduction to Ollama: Running a Local AI Model | ⏳ Upcoming |
 
+> **Note:** Chapter notes from 3.2 onward refer to the ticket summarization chapter, listed above as 2.3, as Chapter 3.1.
 
 ---
 
@@ -95,7 +101,6 @@ Instead of repetitive try-catch blocks scattered across Controllers and Services
 
 This keeps Controllers and Services clean, centralizes error handling in one place, and guarantees clients always receive a predictable error-response shape.
 
-
 ## 🗄️ Repositories (Chapter 1.5)
 
 The Application layer is connected to SQL Server through the **Repository pattern**, while remaining fully independent of Entity Framework Core — the Application layer defines *what* data operations are needed; the Infrastructure layer defines *how* they're performed.
@@ -114,11 +119,9 @@ The Application layer is connected to SQL Server through the **Repository patter
 
 Ticket Priority and Ticket Status repositories are **read-only**, since those values are controlled by predefined Enums (`TicketPriorityType`, `TicketStatusType`) rather than free-form admin-managed master data like Ticket Categories.
 
-
-
 ## ⚙️ Application Services (Chapter 1.6)
 
-Application Services sit between the (upcoming) Controllers and the Repository layer, coordinating business logic, DTO mapping, and validation before touching the database.
+Application Services sit between the Controllers and the Repository layer, coordinating business logic, DTO mapping, and validation before touching the database.
 
 - `CustomerSupport.Application/Interfaces/Services/`
   - `IMasterDataService` — read-only access to Ticket Priority and Ticket Status master data
@@ -130,7 +133,6 @@ Application Services sit between the (upcoming) Controllers and the Repository l
   - `AddApplicationServices()` — registers all Application Services with the DI container, wired up in `Program.cs`
 
 Also completed in this chapter: full DI registration of all 7 repository interfaces (`IUserRepository`, `IRefreshTokenRepository`, `IProductRepository`, `ITicketCategoryRepository`, `ITicketPriorityRepository`, `ITicketStatusRepository`, `ITicketRepository`) in `InfrastructureServiceExtensions.cs`, completing the wiring that Chapter 1.5 introduced.
-
 
 ## 🔐 JWT Authentication (Chapter 1.7)
 
@@ -149,7 +151,6 @@ Implements stateless authentication using signed JWTs, with password hashing and
 
 **Security note:** The SQL Server connection string and JWT signing key have been moved out of `appsettings.json` into the gitignored `appsettings.Development.json`, so no secrets are committed to source control going forward.
 
-
 ## 👤 Authorization & Current User Context (Chapter 1.8)
 
 Exposes the authenticated user's identity to the Application layer through a clean abstraction, and wires up ASP.NET Core Authorization on top of the JWT authentication built in Chapter 1.7.
@@ -162,12 +163,11 @@ Exposes the authenticated user's identity to the Application layer through a cle
 
 **Also fixed in this chapter:** the Global Exception Handler (Ch. 1.4) had been accidentally dropped from `Program.cs` during an earlier merge — restored, so authentication/authorization failures now return clean `ApiResponse<T>` errors instead of raw stack traces. The app's root URL (`/`) now redirects to Swagger UI in Development instead of returning a 404.
 
-
 ## 🌐 Product, Ticket Category & Master Data APIs (Chapter 1.9)
 
 The first business Controllers, exposing the Application Services built in Chapter 1.6 as authenticated REST endpoints.
 
-- `CustomerSupport.API/Controllers/ProductsController.cs` — list and create Products
+- `CustomerSupport.API/Controllers/ProductsController.cs` — list active Products, get a Product by id, and (Administrator only) list all Products, create, and update
 - `CustomerSupport.API/Controllers/TicketCategoriesController.cs` — list and create Ticket Categories
 - `CustomerSupport.API/Controllers/MasterDataController.cs` — read-only Ticket Priority and Ticket Status lookups
 
@@ -211,7 +211,6 @@ Adds file attachment support to Support Tickets (upload, list, and download), wi
 
 Because storage sits behind `IFileStorageService`, local disk can be replaced with cloud blob storage later without touching business logic. Uploaded files are written to the `Storage/` folder, which is excluded from source control via `.gitignore`.
 
-
 ## 📚 Knowledge Base & FAQ (Chapter 1.13)
 
 Adds reusable support content that customers and staff can search, and that administrators maintain. This content is also the intended knowledge source for the RAG assistant in the later AI chapters.
@@ -224,7 +223,6 @@ Adds reusable support content that customers and staff can search, and that admi
 - `FAQs` DbSet enabled in `CustomerSupportDbContext` (the table already existed from Chapter 1.2, so no migration was needed)
 
 **Access rules:** Customers and Support Executives can read only active, published Knowledge Base articles and active FAQs. Administrators can read everything, create and update both, publish or unpublish and activate or deactivate articles, and deactivate FAQs.
-
 
 ## 🪵 Serilog Logging, Health Checks & CORS (Chapter 1.14)
 
@@ -248,6 +246,24 @@ Prepares the application for AI features without changing any Module 1 behaviour
 - `ValidateOnStart()` - the API refuses to start if the key or model settings are missing or out of range
 - The **API key is stored in User Secrets**, never in source control. Non-secret settings live in `appsettings.json`.
 
+## ✨ First AI API Call: Ticket Summary (Chapter 2.3)
+
+The first AI-powered endpoint, built inside the existing Clean Architecture without changing any Module 1 feature.
+
+- `POST /api/ai/summarize-ticket` (Administrator only) - sends ticket comments to OpenAI using the Responses API and returns a short summary together with the model used, the response id, and input, output, and total token usage
+- `SummarizeTicketRequestDTO` (validated, 1 to 12,000 characters) and `SummarizeTicketResponseDTO` in `CustomerSupport.Application/DTOs/AI/`
+- `IOpenAITicketSummaryService` (Application) and `OpenAITicketSummaryService` (Infrastructure) - the OpenAI SDK stays out of the Application layer
+- Model and timeout are read from `OpenAI:Model` and `OpenAI:TimeoutSeconds` in `appsettings.json`
+- `AIException` - provider failures are converted into one application exception and mapped by the Global Exception Handler, so clients receive clean `ApiResponse` errors
+
+## 🗺️ What's Next
+
+- **Chapter 3.2 - Prompt Engineering and Context Engineering:** improves the ticket summary prompts, compares prompting techniques, supplies extra context from the client, and protects the application's instructions from untrusted ticket comments.
+- **Chapter 3.3 - First AI Features in the Customer Support Application:** database-connected AI features. The client sends a Ticket ID, and the application loads the ticket, its comments, status, categories, priorities, and approved Knowledge Base guidance through the existing services. AI then suggests a summary, categories and priorities, customer sentiment, reply drafts, and internal notes. The results are suggestions only; authorization, persistence, audit history, and final decisions stay with the application.
+- **Chapter 3.4 - Structured Outputs and Strongly Typed AI Contracts:** asks OpenAI for an exact JSON structure, converts it into a C# object (`TicketAnalysisDTO`), and validates the values against existing SQL Server records.
+- **Chapter 3.5 - Microsoft.Extensions.AI with Structured Outputs:** repeats the structured-output work through the provider-neutral `IChatClient` interface and `GetResponseAsync<T>()`.
+- **Chapter 3.5.1 - Introduction to Ollama:** installs Ollama on Windows, downloads the `llama3.2:3b` model, and runs AI locally, reachable through an HTTP API instead of a cloud service.
+
 ---
 
 ## 🛠️ Tech Stack
@@ -259,11 +275,14 @@ Prepares the application for AI features without changing any Module 1 behaviour
 - **Swagger / OpenAPI**
 - **JWT Authentication & Refresh Tokens** (implemented — see Chapter 1.7 above)
 - **DTOs + Data Annotation Validation + Manual Mapping**
+- **Serilog** rolling file logging, **Health Checks**, and **CORS** (Chapter 1.14)
+- **OpenAI .NET SDK** with the Responses API, configured through User Secrets (Chapters 2.2-2.3)
 
 **Coming soon:**
-- OpenAI / Azure OpenAI / Microsoft Foundry
-- Microsoft.Extensions.AI, Microsoft Agent Framework
-- Azure AI Search (Vector + Hybrid Search)
+- Prompt engineering and structured outputs (Chapters 3.2-3.4)
+- Microsoft.Extensions.AI (`IChatClient`) and local models with Ollama (Chapters 3.5-3.5.1)
+- Azure OpenAI / Microsoft Foundry, Microsoft Agent Framework
+- Azure AI Search (Vector + Hybrid Search) and RAG
 - Model Context Protocol (MCP)
 - Docker, Azure Container Apps, Azure DevOps Pipelines
 
@@ -278,7 +297,26 @@ dotnet restore
 dotnet build
 ```
 
-Update your SQL Server connection string in `CustomerSupport.API/appsettings.Development.json`, then run migrations:
+Add your SQL Server connection string and a JWT signing key (at least 32 characters) to `CustomerSupport.API/appsettings.Development.json`, which is excluded from source control:
+
+```json
+{
+  "ConnectionStrings": {
+    "CustomerSupportDBConnection": "<your SQL Server connection string>"
+  },
+  "Jwt": {
+    "Key": "<a random string of at least 32 characters>"
+  }
+}
+```
+
+Set your OpenAI API key in User Secrets (never in a committed file):
+
+```bash
+dotnet user-secrets set "OpenAI:ApiKey" "<your-key>" --project CustomerSupport.API
+```
+
+Then run the migrations:
 
 ```bash
 dotnet ef database update --project CustomerSupport.Infrastructure --startup-project CustomerSupport.API
@@ -312,4 +350,4 @@ This project is licensed under the MIT License.
 
 ## 🙋 About
 
-   This project is being developed as part of the **AI for .NET Developers** training program to demonstrating the journey from a traditional enterprise application to a fully AI-powered production system.
+This project is being developed as part of the **AI for .NET Developers** training program, demonstrating the journey from a traditional enterprise application to a fully AI-powered production system.
