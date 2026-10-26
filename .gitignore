@@ -39,3 +39,5 @@ packages/
 Thumbs.db
 ## Uploaded ticket attachments (local storage)
 Storage/
+
+Logs/
