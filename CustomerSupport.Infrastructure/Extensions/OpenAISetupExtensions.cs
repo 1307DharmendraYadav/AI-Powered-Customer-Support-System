@@ -73,7 +73,7 @@ namespace CustomerSupport.Infrastructure.Extensions
             // Scoped creates a service instance for each
             // ASP.NET Core dependency-injection scope.
             services.AddScoped<IOpenAITicketSummaryService, OpenAITicketSummaryService>();
-
+            services.AddScoped<IPromptExperimentService, PromptExperimentService>();
             // Return IServiceCollection.
             return services;
         }
