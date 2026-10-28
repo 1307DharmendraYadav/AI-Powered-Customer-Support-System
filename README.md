@@ -37,7 +37,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 2.1 | — | AI, ML, Deep Learning, Predictive, Generative and Agentic AI (concepts, no code) | ✅ Done |
 | 2.2 | `chapter-2-2-ai-environment-openai-setup` | AI Development Environment and Basic OpenAI Setup | ✅ Done |
 | 2.3 | `chapter-2-3-openai-first-api-call` | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ✅ Done |
-| 3.2 | — | Prompt Engineering and Context Engineering for Reliable AI Responses | ⏳ Upcoming |
+| 3.2 | `chapter-3-2-prompt-context-engineering` | Prompt Engineering and Context Engineering for Reliable AI Responses | ✅ Done |
 | 3.3 | — | Build the First AI Features in the Customer Support Application | ⏳ Upcoming |
 | 3.4 | — | Structured Outputs and Strongly Typed AI Contracts | ⏳ Upcoming |
 | 3.5 | — | Microsoft.Extensions.AI with Structured Outputs | ⏳ Upcoming |
@@ -250,15 +250,24 @@ Prepares the application for AI features without changing any Module 1 behaviour
 
 The first AI-powered endpoint, built inside the existing Clean Architecture without changing any Module 1 feature.
 
-- `POST /api/ai/summarize-ticket` (Administrator only) - sends ticket comments to OpenAI using the Responses API and returns a short summary together with the model used, the response id, and input, output, and total token usage
+- `POST /api/ai/summarize-ticket` (Administrator only in this chapter; Support Executives were added in Chapter 3.2) - sends ticket comments to OpenAI using the Responses API and returns a short summary together with the model used, the response id, and input, output, and total token usage
 - `SummarizeTicketRequestDTO` (validated, 1 to 12,000 characters) and `SummarizeTicketResponseDTO` in `CustomerSupport.Application/DTOs/AI/`
 - `IOpenAITicketSummaryService` (Application) and `OpenAITicketSummaryService` (Infrastructure) - the OpenAI SDK stays out of the Application layer
 - Model and timeout are read from `OpenAI:Model` and `OpenAI:TimeoutSeconds` in `appsettings.json`
 - `AIException` - provider failures are converted into one application exception and mapped by the Global Exception Handler, so clients receive clean `ApiResponse` errors
 
+## 🧪 Prompt Engineering & Context Engineering (Chapter 3.2)
+
+Improves the reliability of the ticket summary and adds a development tool for experimenting with prompts.
+
+- **Prompt Lab:** `POST /api/ai/prompt-lab/experiment` accepts developer instructions, ticket comments, and optional reference text, so zero-shot, one-shot, few-shot, and structured prompts can be compared in Postman. It is for development and experimentation only.
+- **Ticket summary upgrade:** `SummarizeTicketRequestDTO` gains `ContextInformation` (optional, up to 4,000 characters of extra ticket background) and `PromptStyle` (`ZeroShot`, `TwoPoint`, `InternalHandover`, `NoResolutionDate`, or `FewShot`; defaults to `ZeroShot`). Requests that send only `ticketComments` keep working.
+- `TicketSummaryPromptBuilder` (`CustomerSupport.Infrastructure/Prompts`) - builds the prompt for each style, so the instructions stay under application control instead of being supplied by the client
+- `IPromptExperimentService` / `PromptExperimentService` and `AIPromptLabController` back the Prompt Lab
+- **Access widened:** the summary endpoint and the Prompt Lab are now available to Administrators and Support Executives; Customers cannot call them
+
 ## 🗺️ What's Next
 
-- **Chapter 3.2 - Prompt Engineering and Context Engineering:** improves the ticket summary prompts, compares prompting techniques, supplies extra context from the client, and protects the application's instructions from untrusted ticket comments.
 - **Chapter 3.3 - First AI Features in the Customer Support Application:** database-connected AI features. The client sends a Ticket ID, and the application loads the ticket, its comments, status, categories, priorities, and approved Knowledge Base guidance through the existing services. AI then suggests a summary, categories and priorities, customer sentiment, reply drafts, and internal notes. The results are suggestions only; authorization, persistence, audit history, and final decisions stay with the application.
 - **Chapter 3.4 - Structured Outputs and Strongly Typed AI Contracts:** asks OpenAI for an exact JSON structure, converts it into a C# object (`TicketAnalysisDTO`), and validates the values against existing SQL Server records.
 - **Chapter 3.5 - Microsoft.Extensions.AI with Structured Outputs:** repeats the structured-output work through the provider-neutral `IChatClient` interface and `GetResponseAsync<T>()`.
@@ -277,9 +286,10 @@ The first AI-powered endpoint, built inside the existing Clean Architecture with
 - **DTOs + Data Annotation Validation + Manual Mapping**
 - **Serilog** rolling file logging, **Health Checks**, and **CORS** (Chapter 1.14)
 - **OpenAI .NET SDK** with the Responses API, configured through User Secrets (Chapters 2.2-2.3)
+- **Prompt engineering and context engineering**, with a development Prompt Lab (Chapter 3.2)
 
 **Coming soon:**
-- Prompt engineering and structured outputs (Chapters 3.2-3.4)
+- Database-integrated AI features and structured outputs (Chapters 3.3-3.4)
 - Microsoft.Extensions.AI (`IChatClient`) and local models with Ollama (Chapters 3.5-3.5.1)
 - Azure OpenAI / Microsoft Foundry, Microsoft Agent Framework
 - Azure AI Search (Vector + Hybrid Search) and RAG
