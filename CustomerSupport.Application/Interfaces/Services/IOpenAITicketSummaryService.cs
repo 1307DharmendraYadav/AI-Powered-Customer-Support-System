@@ -3,11 +3,9 @@ namespace CustomerSupport.Application.Interfaces.Services
 {
     public interface IOpenAITicketSummaryService
     {
-        // Generates a summary of the supplied ticket comments.
-        // CancellationToken allows the API request to be cancelled.
+        // Generates a summary using ticket comments and optional client-provided context.
         Task<SummarizeTicketResponseDTO> SummarizeAsync(
-            string ticketComments,
+            SummarizeTicketRequestDTO request,
             CancellationToken cancellationToken = default);
     }
 }
-
