@@ -20,6 +20,9 @@ namespace CustomerSupport.Application.Extensions
             services.AddScoped<IKnowledgeBaseService, KnowledgeBaseService>();
             services.AddScoped<IFAQService, FAQService>();
 
+            // Application service coordinates existing ticket, category,
+            // priority, and Knowledge Base services with AI generation.
+            services.AddScoped<ITicketAIFeatureService, TicketAIFeatureService>();
 
             return services;
         }
