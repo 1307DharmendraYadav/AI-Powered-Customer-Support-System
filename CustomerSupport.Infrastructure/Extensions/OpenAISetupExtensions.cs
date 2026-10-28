@@ -74,6 +74,10 @@ namespace CustomerSupport.Infrastructure.Extensions
             // ASP.NET Core dependency-injection scope.
             services.AddScoped<IOpenAITicketSummaryService, OpenAITicketSummaryService>();
             services.AddScoped<IPromptExperimentService, PromptExperimentService>();
+
+            // Provider-specific implementation of the text-generation contract.
+            services.AddScoped<IOpenAITextGenerationService, OpenAITextGenerationService>();
+
             // Return IServiceCollection.
             return services;
         }
