@@ -38,7 +38,7 @@ This project is being built chapter-by-chapter as part of the **AI for .NET Deve
 | 2.2 | `chapter-2-2-ai-environment-openai-setup` | AI Development Environment and Basic OpenAI Setup | ✅ Done |
 | 2.3 | `chapter-2-3-openai-first-api-call` | Integrating OpenAI with ASP.NET Core: Making Our First AI API Call | ✅ Done |
 | 3.2 | `chapter-3-2-prompt-context-engineering` | Prompt Engineering and Context Engineering for Reliable AI Responses | ✅ Done |
-| 3.3 | — | Build the First AI Features in the Customer Support Application | ⏳ Upcoming |
+| 3.3 | `chapter-3-3-database-integrated-ai-features` | Build the First AI Features in the Customer Support Application | ✅ Done |
 | 3.4 | — | Structured Outputs and Strongly Typed AI Contracts | ⏳ Upcoming |
 | 3.5 | — | Microsoft.Extensions.AI with Structured Outputs | ⏳ Upcoming |
 | 3.5.1 | — | Introduction to Ollama: Running a Local AI Model | ⏳ Upcoming |
@@ -266,9 +266,21 @@ Improves the reliability of the ticket summary and adds a development tool for e
 - `IPromptExperimentService` / `PromptExperimentService` and `AIPromptLabController` back the Prompt Lab
 - **Access widened:** the summary endpoint and the Prompt Lab are now available to Administrators and Support Executives; Customers cannot call them
 
+## 🧠 Database-Integrated AI Features (Chapter 3.3)
+
+The first AI features that read from SQL Server. The client sends a Ticket ID and a feature name. The application loads the ticket, its comments, the active categories and priorities, and optionally an approved Knowledge Base article through the existing services, then asks OpenAI.
+
+- `POST /api/ai/tickets/{ticketId}/generate` (Administrator and Support Executive) - supports six features: `Summary`, `Category`, `Priority`, `Sentiment`, `ReplyDraft`, and `InternalNote`
+- `GenerateTicketAIRequestDTO` takes only the feature name and an optional `KnowledgeBaseArticleId`; clients cannot send their own instructions or ticket transcript
+- `TicketAIResponseDTO` returns the generated text, plus `SuggestedCategoryId` and `SuggestedPriorityId` only when the suggestion was validated against active master data, together with the model, response id, and token usage
+- `POST /api/ai/tickets/{ticketId}/save-reviewed-note` - saves a staff-reviewed internal note (up to 1,900 characters) through the existing Ticket Service. Generation and saving are separate actions, so nothing is persisted until a staff member approves it.
+- `ITicketAIFeatureService` / `TicketAIFeatureService` (Application) coordinate the ticket, category, priority, and Knowledge Base services with AI generation; `TicketAIPromptBuilder` (`Application/Prompts`) holds the reusable feature prompts
+- `IOpenAITextGenerationService` (Application) with `OpenAITextGenerationService` (Infrastructure) keeps the OpenAI SDK out of the Application layer
+
+This chapter uses plain-text responses. Chapter 3.4 introduces structured outputs.
+
 ## 🗺️ What's Next
 
-- **Chapter 3.3 - First AI Features in the Customer Support Application:** database-connected AI features. The client sends a Ticket ID, and the application loads the ticket, its comments, status, categories, priorities, and approved Knowledge Base guidance through the existing services. AI then suggests a summary, categories and priorities, customer sentiment, reply drafts, and internal notes. The results are suggestions only; authorization, persistence, audit history, and final decisions stay with the application.
 - **Chapter 3.4 - Structured Outputs and Strongly Typed AI Contracts:** asks OpenAI for an exact JSON structure, converts it into a C# object (`TicketAnalysisDTO`), and validates the values against existing SQL Server records.
 - **Chapter 3.5 - Microsoft.Extensions.AI with Structured Outputs:** repeats the structured-output work through the provider-neutral `IChatClient` interface and `GetResponseAsync<T>()`.
 - **Chapter 3.5.1 - Introduction to Ollama:** installs Ollama on Windows, downloads the `llama3.2:3b` model, and runs AI locally, reachable through an HTTP API instead of a cloud service.
@@ -287,9 +299,10 @@ Improves the reliability of the ticket summary and adds a development tool for e
 - **Serilog** rolling file logging, **Health Checks**, and **CORS** (Chapter 1.14)
 - **OpenAI .NET SDK** with the Responses API, configured through User Secrets (Chapters 2.2-2.3)
 - **Prompt engineering and context engineering**, with a development Prompt Lab (Chapter 3.2)
+- **Database-integrated AI features** with human-reviewed saving (Chapter 3.3)
 
 **Coming soon:**
-- Database-integrated AI features and structured outputs (Chapters 3.3-3.4)
+- Structured outputs and strongly typed AI contracts (Chapter 3.4)
 - Microsoft.Extensions.AI (`IChatClient`) and local models with Ollama (Chapters 3.5-3.5.1)
 - Azure OpenAI / Microsoft Foundry, Microsoft Agent Framework
 - Azure AI Search (Vector + Hybrid Search) and RAG
